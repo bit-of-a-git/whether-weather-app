@@ -1,137 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wheather Weather</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wheather Weather</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/css/style.css"/>
-</head>
-<body>
-  <div class="columns">
-    <div class="column is-one-third mt-5">
-      <img src="images/logo.png"/>
-    </div>
-    <div class="column is-one-third mb-0 mt-auto has-text-centered has-text-black has-text-weight-bold">
-      <p class="is-size-1">Berlin</p>
-      <p class="is-size-3">Today</p>
-    </div>
-    <div class="column is-one-third mt-6 p-0 has-text-centered has-background-black has-text-white has-text-weight-bold">
-      <p class="is-size-4 mb-6">Right Now</p>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">11°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">10 km/h</p>
-        </div>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script src="/data/weather_data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  </head>
+  <body>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // First lot:
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentCity = urlParams.get('city');
+
+    const cityHeading = document.getElementById('city');
+    const capitalized = currentCity.charAt(0).toUpperCase() + currentCity.slice(1)
+    cityHeading.innerHTML = capitalized;
+
+    const dailyData = weatherData[currentCity + "_daily"].daily;
+    const hourlyData = weatherData[currentCity + "_hourly"].hourly;
+    const dailyUnits = weatherData[currentCity + "_daily"].daily_units;
+    const hourlyUnits = weatherData[currentCity + "_hourly"].hourly_units;
+
+    const now = dayjs(); // create a new date object that represents this time
+    const currentHour = now.format("HH"); // 0 - 23 as a number
+
+    // we need the index of the current hour in the time array
+    // we then use that index to query the termperature_2m data
+    const indexOfCurrentHour = hourlyData.time.indexOf(`TodayT${currentHour}:00`);
+    const indexOfCurrentHourTomorrow = hourlyData.time.indexOf(`Today+1T${currentHour}:00`);
+    console.log(`The index of the current hour is : ${indexOfCurrentHour}`);
+    console.log(`The index of the current hour tomorrow is : ${indexOfCurrentHourTomorrow}`);
+
+    const rightNowTemp = document.getElementById("rightNowTemp");
+    rightNowTemp.innerHTML = hourlyData.temperature_2m[indexOfCurrentHour] + hourlyUnits.temperature_2m;
+    console.log(`The index of the current hour is : ${indexOfCurrentHour}`);
+    
+    const rightNowWind = document.getElementById("rightNowWind");
+    rightNowWind.innerHTML = hourlyData.wind_speed_10m[indexOfCurrentHour] + hourlyUnits.wind_speed_10m;
+
+    const weatherCodeTodayElement = document.getElementById("weatherCodeToday");
+    const weatherCode = dailyData.weather_code[0];
+    const weatherImageMap = {
+      0: "/images/sun.png",
+      "1-3": "/images/clear-sky.png",
+      "45-48": "/images/fog.png",
+      "51-55": "/images/drizzle.png",
+      "56-57": "/images/freezingDrizzle.png",
+      "61-65": "/images/rainHeavy.png",
+      "66-67": "/images/freezingRain.png",
+      "71-75": "/images/snowfall.png",
+      77: "/images/snowGrains.png",
+      "80-82": "/images/heavyRain.png",
+      "85-86": "/images/snowShowers.png",
+      95: "/images/thunderstorm.png",
+      "96-99": "/images/thunderAndHail.png"
+    };
+
+    // Function to set the weather image from the code
+    function getImageSource(weatherCode) {
+      for (const key in weatherImageMap) {
+        const [start, end] = key.split("-").map(Number);
+        if (start <= weatherCode && weatherCode <= end) {
+          return weatherImageMap[key];
+        }
+      }
+    // Default to sun image if no match found
+    return "/images/sun.png";
+    }
+
+    weatherCodeTodayElement.src = getImageSource(weatherCode);
+
+    const maxTemp = document.getElementById("maxTemp");
+    maxTemp.innerHTML = dailyData.temperature_2m_max[0] + dailyUnits.temperature_2m_max;
+    const maxWind = document.getElementById("maxWind");
+    maxWind.innerHTML = dailyData.wind_speed_10m_max[0] + dailyUnits.wind_speed_10m_max;
+
+
+    // Bottom section with weekly summary
+    // const weeklyOne = document.getElementById("today");
+    // weeklyOne.innerHTML = now.add(0, 'day').format("dddd");
+
+    // const weeklyOneWeatherImage = document.getElementById("today-weather-image")
+    // const weeklyOneWeatherCode = dailyData.weather_code[0];
+    // weeklyOneWeatherImage.src = getImageSource(weeklyOneWeatherCode);
+
+    // const weeklyOneLowTemp = document.getElementById("today-min-temp")
+    // weeklyOneLowTemp.innerHTML = dailyData.temperature_2m_min[0] + dailyUnits.temperature_2m_min;
+
+    // const weeklyOneHighTemp = document.getElementById("today-max-temp")
+    // weeklyOneHighTemp.innerHTML = dailyData.temperature_2m_max[0] + dailyUnits.temperature_2m_max;
+
+
+
+    // Trying loop
+    for (let i = 0; i < 7; i++) {
+    const weeklyOne = document.getElementById(`daySummary${i}`);
+    weeklyOne.innerHTML = now.add(i, 'day').format("dddd");
+
+    const weeklyOneWeatherImage = document.getElementById(`daySummaryImage${i}`)
+    const weeklyOneWeatherCode = dailyData.weather_code[i];
+    weeklyOneWeatherImage.src = getImageSource(weeklyOneWeatherCode);
+
+    const weeklyOneLowTemp = document.getElementById(`daySummaryLowTemp${i}`)
+    weeklyOneLowTemp.innerHTML = Math.round(dailyData.temperature_2m_min[i]) + dailyUnits.temperature_2m_min;
+
+    const weeklyOneHighTemp = document.getElementById(`daySummaryHighTemp${i}`)
+    weeklyOneHighTemp.innerHTML = Math.round(dailyData.temperature_2m_max[i]) + dailyUnits.temperature_2m_max;
+    }
+
+
+  // <p id="daySummary0" class="is-size-4 has-text-centered">Today</p>
+  // <img id="daySummaryImage0" class="px-5" src="/images/sun.png"/>
+  //     <p id="daySummaryLowTemp0" class="is-size-4">6°C</p>
+  //     <p id="daySummaryHighTemp0" class="is-size-4">12°C</p>
+
+  });
+</script>
+
+<div class="columns">
+  <div class="column is-one-third mt-5">
+    <img src="/images/logo.png"/>
+  </div>
+  <div class="column is-one-third mb-0 mt-auto has-text-centered has-text-black has-text-weight-bold">
+    <p id="city" class="is-size-1"></p>
+    <p id="time" class="is-size-3"></p>
+  </div>
+  <div class="column is-one-third mt-6 p-0 has-text-centered has-background-black has-text-white has-text-weight-bold">
+    <p class="is-size-4 mb-6">Right Now</p>
+    <div class="columns is-vcentered">
+      <div class="column is-half">
+        <p id="rightNowTemp" class="is-size-4"></p>
+      </div>
+      <div class="column is-half">
+        <p id="rightNowWind" class="is-size-4"></p>
       </div>
     </div>
   </div>
+</div>
+</script>
+<div class="columns is-vcentered">
+  <div class="column is-one-quarter">
+    <img id="weatherCodeToday" class="m-5 p-5"/>
+  </div>
+  <div class="column ml-6 mr-3 p-0 is-one-quarter has-background-black has-text-white has-text-weight-bold">
+    <p class="is-size-5 has-text-centered mb-6">Max Temp</p>
+    <p id="maxTemp" class="is-size-5 has-text-centered mb-6"></p>
+  </div>
+  <div class="column ml-3 mr-6 p-0 is-one-quarter has-background-black has-text-white has-text-weight-bold">
+    <p class="is-size-5 has-text-centered mb-6">Max Wind</p>
+    <p id="maxWind" class="is-size-5 has-text-centered mb-6"></p>
+  </div>
+</div>
+<div class="columns is-centered has-text-white has-text-weight-bold">
+<div class="column is-1 mr-2"></div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary0" class="is-size-4 has-text-centered">Today</p>
+  <img id="daySummaryImage0" class="px-5" src="/images/sun.png"/>
   <div class="columns is-vcentered">
-    <div class="column is-one-quarter">
-      <img class="m-5 p-5" src="images/sun.png"/>
+    <div class="column is-half">
+      <p id="daySummaryLowTemp0" class="is-size-4">6°C</p>
     </div>
-    <div class="column ml-6 mr-3 p-0 is-one-quarter has-background-black has-text-white has-text-weight-bold">
-      <p class="is-size-5 has-text-centered mb-6">Max Temp</p>
-      <p class="is-size-5 has-text-centered mb-6">12°C</p>
-    </div>
-    <div class="column ml-3 mr-6 p-0 is-one-quarter has-background-black has-text-white has-text-weight-bold">
-      <p class="is-size-5 has-text-centered mb-6">Max Wind</p>
-      <p class="is-size-5 has-text-centered mb-6">15 km/h</p>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp0" class="is-size-4">12°C</p>
     </div>
   </div>
-  <div class="columns is-centered has-text-white has-text-weight-bold">
-    <div class="column is-one mr-2"></div>
-    <div class="column is-one mr-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Today</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+</div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary1" class="is-size-4 has-text-centered">Mon</p>
+  <img id="daySummaryImage1" class="px-5" src="/images/sun.png"/>
+  <div class="columns is-vcentered">
+    <div class="column is-half">
+      <p id="daySummaryLowTemp1" class="is-size-4">6°C</p>
     </div>
-    <div class="column is-one mx-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Mon</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp1" class="is-size-4">12°C</p>
     </div>
-    <div class="column is-one mx-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Tue</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+  </div>
+</div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary2" class="is-size-4 has-text-centered">Tue</p>
+  <img id="daySummaryImage2" class="px-5" src="/images/sun.png"/>
+  <div class="columns is-vcentered">
+    <div class="column is-half">
+      <p id="daySummaryLowTemp2" class="is-size-4">6°C</p>
     </div>
-    <div class="column is-one mx-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Wed</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp2" class="is-size-4">12°C</p>
     </div>
-    <div class="column is-one mx-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Thur</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+  </div>
+</div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary3" class="is-size-4 has-text-centered">Wed</p>
+  <img id="daySummaryImage3" class="px-5" src="/images/sun.png"/>
+  <div class="columns is-vcentered">
+    <div class="column is-half">
+      <p id="daySummaryLowTemp3" class="is-size-4">6°C</p>
     </div>
-    <div class="column is-one mx-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Fri</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp3" class="is-size-4">12°C</p>
     </div>
-    <div class="column is-one ml-2 p-1 has-background-black">
-      <p class="is-size-4 has-text-centered">Sat</p>
-      <img class="px-5" src="images/sun.png"/>
-      <div class="columns is-vcentered">
-        <div class="column is-half">
-          <p class="is-size-4">6°C</p>
-        </div>
-        <div class="column is-half">
-          <p class="is-size-4">12°C</p>
-        </div>
-      </div>
+  </div>
+</div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary4" class="is-size-4 has-text-centered">Thur</p>
+  <img id="daySummaryImage4" class="px-5" src="/images/sun.png"/>
+  <div class="columns is-vcentered">
+    <div class="column is-half">
+      <p id="daySummaryLowTemp4" class="is-size-4">6°C</p>
     </div>
-    <div class="column is-one ml-2"></div>
-</body>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp4" class="is-size-4">12°C</p>
+    </div>
+  </div>
+</div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary5" class="is-size-4 has-text-centered">Fri</p>
+  <img id="daySummaryImage5" class="px-5" src="/images/sun.png"/>
+  <div class="columns is-vcentered">
+    <div class="column is-half">
+      <p id="daySummaryLowTemp5" class="is-size-4">6°C</p>
+    </div>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp5" class="is-size-4">12°C</p>
+    </div>
+  </div>
+</div>
+<div class="column mx-2 p-1 has-background-black">
+  <p id="daySummary6" class="is-size-4 has-text-centered">Sat</p>
+  <img id="daySummaryImage6" class="px-5" src="/images/sun.png"/>
+  <div class="columns is-vcentered">
+    <div class="column is-half">
+      <p id="daySummaryLowTemp6" class="is-size-4">6°C</p>
+    </div>
+    <div class="column is-half">
+      <p id="daySummaryHighTemp6" class="is-size-4">12°C</p>
+    </div>
+  </div>
+</div>
+<div class="column is-1 ml-2"></div>
+  </body>
+</html>
