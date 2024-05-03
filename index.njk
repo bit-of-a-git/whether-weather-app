@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Wheather Weather</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"/>
+    <!-- Fetching Bulma and DayJs from CDNs -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <!-- Loading scripts and components -->
     <script src="/data/weather_data.js"></script>
     <script src="/js/getImageSource.js"></script>
     <script src="/js/components/city-summary.js"></script>
@@ -44,11 +47,6 @@
       });
     </script>
     {% include "header.njk" %}
-    <div class="columns is-centered has-text-white has-text-weight-bold">
-      <div class="column is-7">
-        <main class="columns is-multiline is-centered is-vcentered">
-        </main>
-      </div>
-    </div>
+    {% include "main-city-dashboard.njk" %}
   </body>
 </html>
