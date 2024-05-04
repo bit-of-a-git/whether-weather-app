@@ -1,52 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Wheather Weather</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"/>
-    <!-- Fetching Bulma and DayJs from CDNs -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css"/>
-    <!-- Loading scripts and components -->
-    <script src="/data/weather_data.js"></script>
-    <script src="/js/getImageSource.js"></script>
-    <script src="/js/components/city-summary.js"></script>
-    <script src="/data/data-store.js"></script>
-    <script src="/js/capitaliseCityName.js"></script>
-  </head>
-  <body>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-      
-        const title = document.getElementById('title');
-        title.innerHTML = 'Dashboard';
-        const subtitle = document.getElementById('subtitle');
-        subtitle.innerHTML = "Today";
-      
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-      
-        // Selects the "main" in the HTML to add sections to
-        const main = document.querySelector('main');
-      
-        Object.entries(weatherData).forEach(([key, value]) => {
-          if (key.endsWith("_daily")) {
-            // Process the key-value pair as needed
-            main.innerHTML += createCitySummary(key, value);
-          }
-        })
-      
-      });
-    </script>
-    {% include "header.njk" %}
-    {% include "main-city-dashboard.njk" %}
-  </body>
-</html>
+---
+layout: layout.njk
+script: /js/pages/index.js
+---
+{% include "main-city-dashboard.njk" %}
