@@ -1,4 +1,4 @@
-const createCitySummary = (city, value) => {
+const createDashboardCitySummary = (city, value) => {
   
   return `
   <div class="column is-3 m-3 p-1 has-background-black">
