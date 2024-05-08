@@ -1,17 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
-      
-  const title = document.getElementById('title');
-  title.innerHTML = 'Dashboard';
-  const subtitle = document.getElementById('subtitle');
-  subtitle.innerHTML = "Today";
 
-  // Selects the "dashboard" element in the HTML to add sections to
-  const dashboard = document.getElementById('dashboard');
+  const titleElement = document.getElementById('title');
+  const subtitleElement = document.getElementById('subtitle');
+  const dashboardElement = document.getElementById('dashboard');
+
+  titleElement.innerHTML = 'Dashboard';
+  subtitleElement.innerHTML = "Today";
 
   Object.entries(weatherData).forEach(([key, value]) => {
     if (key.endsWith("_daily")) {
-      // Process the key-value pair as needed
-      dashboard.innerHTML += createDashboardCitySummary(key, value);
+
+      const city = key.replace("_daily", "")
+      const cityTitle = capitaliseCityName(key);
+      const weatherImage = getImageSource(value.daily.weather_code[0]);
+      const value1 = Math.round(value.daily.temperature_2m_min[0]) + value.daily_units.temperature_2m_min
+      const value2 = Math.round(value.daily.temperature_2m_max[0]) + value.daily_units.temperature_2m_max
+
+      dashboardElement.innerHTML += createDashboardCitySummary(cityTitle, city, weatherImage, value1, value2);
     }
   })
 })
