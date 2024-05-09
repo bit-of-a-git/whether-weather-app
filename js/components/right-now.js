@@ -1,7 +1,7 @@
 const createRightNowElement = (currentTemp, currentWind) => {
 
   return `
-  <div class="column is-11 mt-4 mr-3 has-text-centered has-background-success has-text-white has-text-weight-bold">
+  <div class="column is-11 mt-4 mr-3 has-text-centered has-background-success has-text-white has-text-weight-medium">
     <p class="is-size-4 mb-6">Right Now</p>
     <div class="columns is-vcentered">
       <div class="column is-half">

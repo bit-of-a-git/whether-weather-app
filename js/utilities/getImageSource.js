@@ -1,8 +1,11 @@
   // This function fetches the weather image using a map, and checking whether the weatherCode
   // passed is found in one of the keys in the map
+
+  // https://stackoverflow.com/questions/38056887/javascript-object-find-a-key-value-when-in-range
+  
   function getImageSource(weatherCode) {
     for (const key in weatherImageMap) {
-      // Gets the start and the end values by splitting using "-"
+      // Gets the start and the end values by splitting the key using "-"
       const [start, end] = key.split("-").map(Number);
       if (start <= weatherCode && weatherCode <= end) {
         return weatherImageMap[key];

@@ -7,9 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   titleElement.innerHTML = 'Dashboard';
   subtitleElement.innerHTML = "Today";
 
+  // https://www.digitalocean.com/community/tutorials/js-object-entries-values
   Object.entries(weatherData).forEach(([key, value]) => {
     if (key.endsWith("_daily")) {
 
+      // Fetches the values needed for each dashboard element.
       const city = key.replace("_daily", "")
       const cityTitle = capitaliseCityName(key);
       const weatherImage = getImageSource(value.daily.weather_code[0]);
