@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // Some of the urlParams, dayjs, hourlyData, and dailyData code was taken from the test.html
+  // file provided by SETU to help with fetching data.
+
   const urlParams = new URLSearchParams(window.location.search);
   const currentCity = urlParams.get('city');
   // currentDay is fetched as a string. The Number function is used here to cast it to an int for comparison
