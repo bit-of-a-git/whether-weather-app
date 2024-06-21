@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const subtitleElement = document.getElementById('subtitle');
   const dashboardElement = document.getElementById('dashboard');
 
-  titleElement.innerHTML = 'Dashboard';
-  subtitleElement.innerHTML = "Today";
+  titleElement.textContent = 'Dashboard';
+  subtitleElement.textContent = "Today";
 
   // https://www.digitalocean.com/community/tutorials/js-object-entries-values
   Object.entries(weatherData).forEach(([key, value]) => {

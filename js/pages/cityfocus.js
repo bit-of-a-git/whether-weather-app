@@ -13,12 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const titleElement = document.getElementById('title');
   const subtitleElement = document.getElementById('subtitle');
   // Replaces the title with the current city, formatted using the capitaliseCityName function
-  titleElement.innerHTML = capitaliseCityName(currentCity);
+  titleElement.textContent = capitaliseCityName(currentCity);
   
   // Replaces the subtitle with Today, Tomorrow, or the actual day
   // https://builtin.com/software-engineering-perspectives/javascript-question-mark-operator
   const dayName = currentDay === 0 ? "Today": currentDay === 1 ? "Tomorrow" : now.add(currentDay, 'day').format("dddd");
-  subtitleElement.innerHTML = dayName;
+  subtitleElement.textContent = dayName;
 
   // Adds a "Right Now" header section if the day is 'today'
   if (currentDay === 0) {
